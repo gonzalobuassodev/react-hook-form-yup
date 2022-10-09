@@ -11,7 +11,13 @@ const formSchema = object().shape({
       /^([^0-9_-]*)$/,
       'First name should be not contain numbers or special characters'
     )
-    .required('Username is a required field'),
+    .required('Username is a required field')
+    .test('checkDuplicate', 'The username exist.', function (value) {
+      if (value?.toLowerCase() === 'gonzalo') {
+        return false;
+      }
+      return true;
+    }),
   password: string().required('Password is a required field'),
   email: string()
     .email('Invalid email address')
@@ -26,6 +32,7 @@ const Form: React.FC<FormInterface> = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
+    // mode: 'onChange',
     mode: 'onBlur',
     resolver: yupResolver(formSchema),
     defaultValues: {
